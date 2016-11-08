@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons>
+      <button ion-button icon-only color="primary" (click)="launch()">
+        <ion-icon name="link"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>{{article.title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding [innerHtml]="article.content">
+</ion-content>
