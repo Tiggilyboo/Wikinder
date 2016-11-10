@@ -1,5 +1,5 @@
 {
-  "name": "Wikinder",
+  "name": "Wiknder",
   "author": "CannyMoose",
   "homepage": "http://simonwillshire.com/",
   "private": true,
@@ -34,7 +34,7 @@
     "@ionic/app-scripts": "0.0.39",
     "typescript": "2.0.6"
   },
-  "description": "Wikinder",
+  "description": "Wiknder",
   "cordovaPlugins": [
     "cordova-plugin-device",
     "cordova-plugin-console",
