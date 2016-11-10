@@ -10,17 +10,18 @@
 </ion-header>
 
 <ion-content padding>
-  <div swing-stack #stack [stackConfig]="stackConfig" (throwoutleft) ="like(true)" (throwoutright) = "like(false)" id="card-stack">
-    <ion-card #cards swing-card *ngFor="let c of cards" (click)="view(c['pageId'])">
-      <ion-card-header>
-        <h1>{{c['title']}}</h1>
+  <div swing-stack #stack [stackConfig]="stackConfig" id="card-stack"
+    (throwoutleft)="throwLeft()" (throwoutright)="throwRight()">
+    <ion-card #cards swing-card *ngFor="let c of cards; trackBy: trackByArticle" (click)="view(c)">
+      <ion-card-header *ngIf="!!c['title']" text-wrap>
+        <h2>{{c['title']}}</h2>
       </ion-card-header>
-      <ion-card-content>
+      <ion-card-content *ngIf="!!c['extract']">
         <p [innerHtml]="trim(c['extract'])"></p>
       </ion-card-content>
     </ion-card>
   </div>
-  <ion-card *ngIf="cards.length == 0">
+  <ion-card *ngIf="cards.length == 0" id="load">
     <ion-card-header>
       <h1 class="center">
         Loading...
@@ -37,12 +38,12 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons>
-      <button ion-button icon-only large (click)="like(false)" [disabled]="noCards()">
+      <button ion-button icon-only large (click)="throwLeft()" [disabled]="noCards()">
         <ion-icon name="thumbs-down" color="primary"></ion-icon>
       </button>
     </ion-buttons>
     <ion-buttons end>
-      <button ion-button icon-only large (click)="like(true)" [disabled]="noCards()">
+      <button ion-button icon-only large (click)="throwRight()" [disabled]="noCards()">
         <ion-icon name="thumbs-up" color="primary"></ion-icon>
       </button>
     </ion-buttons>

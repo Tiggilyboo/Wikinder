@@ -1,10 +1,5 @@
 <ion-header>
   <ion-navbar>
-    <ion-buttons>
-      <button ion-button icon-only color="primary" (click)="launch()">
-        <ion-icon name="link"></ion-icon>
-      </button>
-    </ion-buttons>
     <ion-title>{{article.title}}</ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="dismiss()">
@@ -14,5 +9,38 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding [innerHtml]="article.content">
+<ion-content padding>
+  <ion-list no-lines>
+    <ion-item text-wrap [innerHtml]="article.extract"></ion-item>
+  </ion-list>
 </ion-content>
+
+<ion-footer>
+  <ion-item-group no-lines>
+    <ion-item class="interests" *ngIf="!!article['categories'] && article['categories'].length > 0">
+      <div *ngFor="let c of article['categories']; let i = index" text-wrap>
+        <span *ngIf="!!c['title'] && i < numShow" class="interest">{{parseCategory(c.title)}}</span>
+      </div>
+      <button ion-button icon-only full color="light" (click)="showMore()" *ngIf="numShow < article['categories'].length">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-item-group>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row class="center">
+        <ion-col width-33><ion-buttons><button id="down" ion-button icon-only color="primary" (click)="like(false)">
+          <ion-icon name="thumbs-down"></ion-icon>
+        </button></ion-buttons></ion-col>
+        <ion-col width-33><ion-buttons *ngIf="!!article['pageid']">
+          <button ion-button icon-only color="primary" (click)="launch(article['pageid'])">
+            <ion-icon name="globe"></ion-icon>
+          </button>
+        </ion-buttons></ion-col>
+        <ion-col width-33><ion-buttons><button id="up" ion-button icon-only color="primary" (click)="like(true)">
+          <ion-icon name="thumbs-up"></ion-icon>
+        </button></ion-buttons></ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

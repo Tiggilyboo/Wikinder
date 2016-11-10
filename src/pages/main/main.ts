@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { Events, NavController, ModalController } from 'ionic-angular';
 import { Wiki } from '../../providers/wiki';
 
 import { SettingsPage } from '../settings/settings';
@@ -10,12 +10,6 @@ import {
   SwingStackComponent, SwingCardComponent
 } from 'angular2-swing';
 
-/*
-  Generated class for the Main page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-main',
   templateUrl: 'main.html',
@@ -29,29 +23,32 @@ export class MainPage {
   stackConfig: StackConfig;
 
   constructor(
+    public events: Events,
     public navCtrl: NavController,
     public wiki: Wiki,
     public modal: ModalController
   ){
-    this.cards = [
-      {
-        title: 'Welcome!',
-        extract: 'Hey there, welcome to Wikinder, swipe <ion-icon name="left" color="danger"></ion-icon> to dislike \
-           and swipe <ion-icon name="right" color="secondary"></ion-icon> to like the article. You can also read the whole \
-           article by tapping it.',
-        categories: [{
-          title: "Introduction"
-        }]
-      }
-    ];
+    var that = this;
+    this.events.subscribe('loadMore', (data) => {
+      this.cards.pop();
+      that.wiki.getArticles(1).then((a) => {
+        if(!!a && a.length > 0){
+          for(let i = 0; i < a.length; i++){
+            that.cards.push(a[i]);
+          }
+        }
+      });
+    });
+
+    this.cards = [];
     this.stackConfig = {
-      throwOutDistance: (d) => { return 256; },
+      minThrowOutDistance: 100,
       throwOutConfidence: (offset, element) => {
-        return Math.min(Math.abs(offset) / (element.offsetWidth/2, 1));
+        return 1;
       },
       transform: (el, x, y, r) => {
         var c = '', ax = Math.abs(x);
-        let m = Math.trunc(Math.min(256 - ax, 256));
+        let m = Math.trunc(Math.min(256 - ax / 2, 256));
         let hc = Number(m).toString(16);
         while(hc.length < 2){ hc = "0" + hc; }
         if(x < 0) c = '#FF' + hc + hc;
@@ -64,7 +61,16 @@ export class MainPage {
   }
 
   trim(c: string): string {
-    return c.substring(0, 500);
+    let el = c.length > 500 ? "..." : "";
+    return c.substring(0, 500) + el;
+  }
+
+  stringify(c: any): string {
+    return JSON.stringify(c);
+  }
+
+  trackByArticle(index: number, article: any){
+    return article['pageid'];
   }
 
   ionViewDidLoad() {
@@ -74,8 +80,8 @@ export class MainPage {
       event.target.style.background = '#fff';
     });
 
-    this.wiki.getArticles(5).then((a) => {
-      that.cards = that.cards.concat(a);
+    this.wiki.getArticles(4).then((a) => {
+      that.cards = a;
     });
   }
 
@@ -93,8 +99,20 @@ export class MainPage {
     }
 
     this.wiki.getArticles(1).then((a) => {
-      that.cards = that.cards.concat(a);
+      if(!!a && a.length > 0){
+        for(let i = 0; i < a.length; i++){
+          that.cards.push(a[i]);
+        }
+      }
     });
+  }
+
+  throwLeft(){
+    this.like(false);
+  }
+
+  throwRight(){
+    this.like(true);
   }
 
   settings(){
@@ -105,7 +123,9 @@ export class MainPage {
     return this.cards.length == 0;
   }
 
-  view(pageId: string){
-    this.modal.create(ArticlePage).present();
+  view(card: any){
+    this.modal.create(ArticlePage, {
+      article: card
+    }).present();
   }
 }

@@ -1,3 +1,32 @@
 page-article {
-
+  .content-md, .item-md {
+    background-color: #fff;
+  }
+  .label-md {
+    overflow: visible;
+  }
+  .interests {
+    display: block;
+    overflow-x: scroll;
+  }
+  .interest {
+    display: inline;
+    float: left;
+    padding: .2em .6em .3em;
+    font-size: 90%;
+    color: #222;
+    text-align: center;
+    vertical-align: baseline;
+    border-radius: .5em;
+    background-color: #efefef;
+  }
+  .center {
+    text-align: center;
+  }
+  #down {
+    float: left;
+  }
+  #up {
+    float: right;
+  }
 }

@@ -50,7 +50,7 @@ export class Cache {
       that.storage.length().then((l) => {
         that.storage.forEach((j: any, k: string, i: number) => {
           var all = [];
-          var v = JSON.parse(j)
+          var v = typeof(j) === "string" ? JSON.parse(j) : j;
 
           if(!!v && !!v['interest']) all.push(v);
           if(++c >= l) return all;
@@ -82,7 +82,7 @@ export class Cache {
   updateRankWithReferral(referral: string, increase: boolean = true): Promise<void>{
     return new Promise<void>(() => {
       this.storage.forEach((j: any, k: string, i: number) => {
-        var it = JSON.parse(j);
+        var it = typeof(j) === "string" ? JSON.parse(j) : j;
         if(it.referral == referral){
           it.rank += increase ? 1 : -1;
           this.storage.set(it.interest, it);

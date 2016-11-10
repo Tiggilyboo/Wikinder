@@ -84,9 +84,9 @@ export class Wiki {
     return this.http.get(url, this.requestHeader)
       .map((d) => { return d.json() }).toPromise()
       .then(function(d){
-        if(!!d && !!d['query'] && !!d['query']['random'] && !!d['query']['random'])
-          return that.getExtract(d['query']['random']['id']);
-        else if(!!d && !!d['query'] && !!d['query']['categorymembers'] && d['query']['categorymembers'].length > 0){
+        if(!!d && !!d['query'] && !!d['query']['random'] && !!d['query']['random']){
+          return that.getExtract(d['query']['random'][0]['id']);
+        } else if(!!d && !!d['query'] && !!d['query']['categorymembers'] && d['query']['categorymembers'].length > 0){
           let r = Math.floor(Math.random() * d['query']['categorymembers'].length);
           return that.getExtract(d['query']['categorymembers'][r]['pageid']);
         } else return {
@@ -103,20 +103,20 @@ export class Wiki {
 
   getExtract(pageId: string): Promise<any> {
     var url = this.constructQuery();
-    url += "&prop=extracts|categories&exintro=&explaintext=&clprop=sortkey&clshow=!hidden&cllimit=";
+    url += "&prop=extracts|categories&exintro&explaintext&clprop=sortkey&clshow=!hidden&cllimit=";
     url += this.categoryLimit;
     url += "&pageids=" + pageId;
 
     return this.http.get(url, this.requestHeader)
       .map((d) => { return d.json() }).toPromise()
       .then(function(d){
-        if(!!d && !!d['query'] && !!d['query']['pages'] && d['query']['pages'].length > 0){
+        if(!!d && !!d['query'] && !!d['query']['pages']){
           return d['query']['pages'][pageId];
         } else {
-          return {
-            title: 'Error',
-            extract: 'Bad Response from Wikipedia Servers'
-          };
+         return {
+           title: 'Error',
+           extract: 'Bad Response from Wikipedia Servers'
+         };
         }
       }, function(e){
         return {
@@ -126,17 +126,10 @@ export class Wiki {
       });
   }
 
-  getPage(pageId: string): Promise<any> {
-    var url = this.wiki.replace("{id}", pageId);
-
-    return this.http.get(url)
-      .map((d) => { return d.json() }).toPromise()
-      .catch((e) => {
-        return {
-          title: 'Error',
-          extract: 'getPage: ' + JSON.stringify(e)
-        };
-      });
+  getPage(pageId: string): string {
+    return this.wiki
+      .replace("{lang}", this.language)
+      .replace("{id}", pageId);
   }
 
   getArticles(n: number): Promise<any> {
