@@ -1,9 +1,9 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Wikinder</ion-title>
+    <ion-title>Wiknder</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (click)="settings()">
-        <ion-icon name="options"></ion-icon>
+      <button ion-button icon-only (click)="menu($event)">
+        <ion-icon name="more"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -11,7 +11,7 @@
 
 <ion-content padding>
   <div swing-stack #stack [stackConfig]="stackConfig" id="card-stack"
-    (throwoutleft)="throwLeft()" (throwoutright)="throwRight()">
+    (throwoutleft)="like(false)" (throwoutright)="like(true)" (throwoutdown)="bookmark()">
     <ion-card #cards swing-card *ngFor="let c of cards; trackBy: trackByArticle" (click)="view(c)">
       <ion-card-header *ngIf="!!c['title']" text-wrap>
         <h2>{{c['title']}}</h2>
@@ -37,15 +37,20 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-buttons>
-      <button ion-button icon-only large (click)="throwLeft()" [disabled]="noCards()">
-        <ion-icon name="thumbs-down" color="primary"></ion-icon>
-      </button>
-    </ion-buttons>
-    <ion-buttons end>
-      <button ion-button icon-only large (click)="throwRight()" [disabled]="noCards()">
-        <ion-icon name="thumbs-up" color="primary"></ion-icon>
-      </button>
-    </ion-buttons>
+    <ion-grid>
+      <ion-row class="center">
+        <ion-col width-33><ion-buttons><button id="down" ion-button icon-only color="primary" (click)="like(false)" [disabled]="noCards()">
+          <ion-icon name="thumbs-down"></ion-icon>
+        </button></ion-buttons></ion-col>
+        <ion-col width-33><ion-buttons>
+          <button id="archive" ion-button icon-only (click)="bookmark()" [disabled]="noCards()">
+            <ion-icon name="filing"></ion-icon>
+          </button>
+        </ion-buttons></ion-col>
+        <ion-col width-33><ion-buttons><button id="up" ion-button icon-only color="primary" (click)="like(true)" [disabled]="noCards()">
+          <ion-icon name="thumbs-up"></ion-icon>
+        </button></ion-buttons></ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
 </ion-footer>

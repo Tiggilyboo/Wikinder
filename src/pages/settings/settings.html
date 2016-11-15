@@ -1,68 +1,49 @@
-<ion-header>
-  <ion-navbar hideBackButton="false">
-    <ion-title>Options</ion-title>
-    <ion-buttons end>
-      <button ion-button icon-only (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
+<ion-list class="settings">
+  <ion-item>
+    <ion-label>How Random?</ion-label>
+    <ion-range min="0" max="100" step="1" [(ngModel)]="chanceRandom"></ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label>Language</ion-label>
+    <ion-select [(ngModel)]="language">
+      <ion-option value="en">English</ion-option>
+      <ion-option value="sv">Svenska</ion-option>
+      <ion-option value="ceb">Cebuano</ion-option>
+      <ion-option value="de">Deutsch</ion-option>
+      <ion-option value="nl">Nederlands</ion-option>
+      <ion-option value="fr">Français</ion-option>
+      <ion-option value="ru">русский</ion-option>
+      <ion-option value="it">Italian</ion-option>
+      <ion-option value="es">Español</ion-option>
+      <ion-option value="war">Winaray</ion-option>
+      <ion-option value="pl">Polski</ion-option>
+      <ion-option value="vi">Tiếng Việt</ion-option>
+      <ion-option value="ja">日本語</ion-option>
+      <ion-option value="pt">Português</ion-option>
+      <ion-option value="zh">中文</ion-option>
+      <ion-option value="uk">українська</ion-option>
+      <ion-option value="ca">Català</ion-option>
+      <ion-option value="fa">فارسی</ion-option>
+      <ion-option value="no">Norsk bokmål</ion-option>
+      <ion-option value="ar">Arabic</ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item inset>
+    <ion-buttons>
+      <button ion-item icon-left full color="light" (click)="history()">
+        <ion-icon name="heart"></ion-icon>
+        Interests
+      </button>
+      <button ion-item icon-left full color="light" (click)="bookmarks()">
+        <ion-icon name="filing"></ion-icon>
+        Bookmarks
       </button>
     </ion-buttons>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label>Language</ion-label>
-      <ion-select [(ngModel)]="language">
-        <ion-option value="en">English</ion-option>
-        <ion-option value="sv">Svenska</ion-option>
-        <ion-option value="ceb">Cebuano</ion-option>
-        <ion-option value="de">Deutsch</ion-option>
-        <ion-option value="nl">Nederlands</ion-option>
-        <ion-option value="fr">Français</ion-option>
-        <ion-option value="ru">русский</ion-option>
-        <ion-option value="it">Italian</ion-option>
-        <ion-option value="es">Español</ion-option>
-        <ion-option value="war">Winaray</ion-option>
-        <ion-option value="pl">Polski</ion-option>
-        <ion-option value="vi">Tiếng Việt</ion-option>
-        <ion-option value="ja">日本語</ion-option>
-        <ion-option value="pt">Português</ion-option>
-        <ion-option value="zh">中文</ion-option>
-        <ion-option value="uk">українська</ion-option>
-        <ion-option value="ca">Català</ion-option>
-        <ion-option value="fa">فارسی</ion-option>
-        <ion-option value="no">Norsk bokmål</ion-option>
-        <ion-option value="ar">Arabic</ion-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label>Chance of Random Article</ion-label>
-      <ion-range min="0" max="100" step="1" [(ngModel)]="chanceRandom">
-        <ion-label range-left>Never</ion-label>
-        <ion-label range-right>Always</ion-label>
-      </ion-range>
-    </ion-item>
-    <ion-item>
-      <ion-buttons>
-        <button ion-button block outline color="danger" (click)="clearInterests()" [disabled]="interestsCleared">
-          Delete Interests
-        </button>
-        <button ion-button block outline color="danger" (click)="clearHistory()" [disabled]="historyCleared">
-          Delete History
-        </button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
-</ion-content>
-
-<ion-footer>
-  <ion-item-group no-lines>
-    <p class="about">
-      <i>Wiknder</i> - CannyMoose 2016
-    </p>
-    <a class="website" ion-button icon-only icon-right color="light" href="http://simonwillshire.com">
+  </ion-item>
+  <ion-item text-wrap class="about">
+    <i>Wiknder</i>
+    <a icon-only item-right color="primary" href="http://simonwillshire.com">
       <ion-icon name="globe"></ion-icon>
     </a>
-  </ion-item-group>
-</ion-footer>
+  </ion-item>
+</ion-list>

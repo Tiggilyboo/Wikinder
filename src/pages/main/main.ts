@@ -1,6 +1,7 @@
 import { Component, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { Events, NavController, ModalController } from 'ionic-angular';
+import { Events, NavController, ModalController, PopoverController } from 'ionic-angular';
 import { Wiki } from '../../providers/wiki';
+import { Cache } from '../../providers/cache';
 
 import { SettingsPage } from '../settings/settings';
 import { ArticlePage } from '../article/article';
@@ -25,26 +26,31 @@ export class MainPage {
   constructor(
     public events: Events,
     public navCtrl: NavController,
-    public wiki: Wiki,
-    public modal: ModalController
+    public popover: PopoverController,
+    public modal: ModalController,
+    public cache: Cache,
+    public wiki: Wiki
   ){
     var that = this;
     this.events.subscribe('loadMore', (data) => {
       this.cards.pop();
       that.wiki.getArticles(1).then((a) => {
         if(!!a && a.length > 0){
-          for(let i = 0; i < a.length; i++){
-            that.cards.push(a[i]);
-          }
+          that.cards = that.cards.concat(a);
         }
       });
     });
 
     this.cards = [];
+    
     this.stackConfig = {
-      minThrowOutDistance: 100,
+      minThrowOutDistance: 150,
       throwOutConfidence: (offset, element) => {
-        return 1;
+        let w = offset - element.offsetHeight / 2;
+        let h = offset - element.offsetWidth / 2;
+        if(w > 150 || w < 150) return 1;
+        else if(h > 100 || h < 100) return -1;
+        else return 0;
       },
       transform: (el, x, y, r) => {
         var c = '', ax = Math.abs(x);
@@ -65,10 +71,6 @@ export class MainPage {
     return c.substring(0, 500) + el;
   }
 
-  stringify(c: any): string {
-    return JSON.stringify(c);
-  }
-
   trackByArticle(index: number, article: any){
     return article['pageid'];
   }
@@ -87,36 +89,44 @@ export class MainPage {
 
   like(actually: boolean){
     let card = this.cards.pop();
-    let id = card['pageid'];
+    let id: string = card['pageid'];
     let categories = card['categories'];
     var that = this;
 
     this.wiki.addHistory(id);
     if(!!categories){
       for(let i = 0; i < categories.length; i++){
-        this.wiki.vote(categories[i], actually);
+        if(!categories[i]['title']) continue;
+        this.wiki.vote(categories[i]['title'], id, actually);
       }
     }
 
     this.wiki.getArticles(1).then((a) => {
       if(!!a && a.length > 0){
-        for(let i = 0; i < a.length; i++){
-          that.cards.push(a[i]);
-        }
+        that.cards = that.cards.concat(a);
       }
     });
   }
 
-  throwLeft(){
-    this.like(false);
+  bookmark(){
+    let card = this.cards.pop();
+    let id: string = card['pageid'];
+    var that = this;
+
+    this.wiki.addHistory(id);
+    this.cache.getBookmarks().then((b) => {
+      that.cache.setBookmarks(b.concat(card));
+    });
+
+    this.wiki.getArticles(1).then((a) => {
+      if(!!a && a.length > 0){
+        that.cards = that.cards.concat(a);
+      }
+    });
   }
 
-  throwRight(){
-    this.like(true);
-  }
-
-  settings(){
-    this.modal.create(SettingsPage).present();
+  menu(e: any){
+    this.popover.create(SettingsPage).present({ ev: e });
   }
 
   noCards(): boolean {

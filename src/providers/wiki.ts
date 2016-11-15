@@ -144,13 +144,15 @@ export class Wiki {
         var requests = 0;
 
         while(requests < n){
-          if(interests.length == 0 || Math.random() > this.chanceRandom){
+          if(interests.length == 0 || Math.random() > that.chanceRandom){
             that.getRandom().then((r) => {
               articles.push(r);
               if(articles.length == n){ resolve(articles) };
             }).catch((e) => { reject(e) });
           } else {
-            var interest = interests.pop();
+            let r = Math.floor(Math.random() * interests.length);
+            var interest = interests[r];
+
             that.getRandom(interest['interest']).then((r) => {
               articles.push(r);
               if(articles.length == n){ resolve(articles) };
@@ -167,7 +169,9 @@ export class Wiki {
     });
   }
 
-  vote(interest: string, like: boolean): Promise<void> {
-    return this.cache.updateRankWithReferral(interest, like);
+  vote(interest: string, referral: string, like: boolean): Promise<void> {
+    return this.cache.updateRank(
+      interest, referral, like
+    );
   }
 }

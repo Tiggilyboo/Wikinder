@@ -20,6 +20,7 @@ export class Cache {
           random: 0.3,
           language: 'en'
         }));
+        this.storage.set('_bookmarks', '[]');
       }
     })
   }
@@ -40,6 +41,36 @@ export class Cache {
     return this.storage.get(key);
   }
 
+  setBookmarks(bookmarks: Array<any>){
+    this.storage.set('_bookmarks', JSON.stringify(bookmarks));
+  }
+
+  getBookmarks(): Promise<any>{
+    return this.storage.get('_bookmarks').then((b) => {
+      var v = typeof(b) === "string" ? JSON.parse(b) : b;
+      if(!!v && v.length > 0) return v
+      else return [];
+    });
+  }
+
+  all(start: number, count: number): Promise<any>{
+    var that = this;
+
+    return new Promise(function(resolve, reject){
+      let all = [];
+      let s: number = 0;
+
+      return that.storage.length().then((l) => {
+        that.storage.forEach((v, k , i) => {
+          if(!!v && !!v['interest']
+          && ++s > start && all.length < count)
+            all.push(v);
+          if(all.length == l - 2) resolve(all);
+        });
+      });
+    });
+  }
+
   // This will get disgustingly slow
   getTopInterests(n: number): Promise<any>{
     var that = this;
@@ -48,12 +79,11 @@ export class Cache {
       var c = 0;
 
       that.storage.length().then((l) => {
+        var all = [];
         that.storage.forEach((j: any, k: string, i: number) => {
-          var all = [];
           var v = typeof(j) === "string" ? JSON.parse(j) : j;
-
           if(!!v && !!v['interest']) all.push(v);
-          if(++c >= l) return all;
+          if(++c >= l - 2) return all;
         }).then((a) => {
           c = 0;
           resolve(a.sort(function(x, y){
@@ -79,14 +109,26 @@ export class Cache {
     });
   }
 
-  updateRankWithReferral(referral: string, increase: boolean = true): Promise<void>{
-    return new Promise<void>(() => {
-      this.storage.forEach((j: any, k: string, i: number) => {
-        var it = typeof(j) === "string" ? JSON.parse(j) : j;
-        if(it.referral == referral){
-          it.rank += increase ? 1 : -1;
-          this.storage.set(it.interest, it);
+  updateRank(interest: string, referral: string, increase: boolean = true): Promise<void>{
+    var that = this;
+    var newInterest = function(){
+      that.storage.set(interest, {
+        interest: interest,
+        rank: increase ? 1 : -1,
+        referral: referral
+      });
+    };
+    return new Promise<void>(function(resolve, reject){
+      that.storage.get(interest).then((d) => {
+        if(!!d && !!d['rank']){
+          let inc = increase ? 1 : -1;
+          d['rank'] += inc;
+          that.storage.set(interest, d);
+        } else {
+          newInterest();
         }
+      }, (e) => {
+        newInterest();
       });
     });
   }

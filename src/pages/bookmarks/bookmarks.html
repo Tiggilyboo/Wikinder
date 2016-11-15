@@ -1,0 +1,39 @@
+
+<ion-header>
+  <ion-navbar>
+    <ion-title>Bookmarks</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let b of bookmarks; let i = index" (click)="view(b)">
+      {{b['title']}}
+      <button ion-button item-right icon-only clear (click)="delete(i)">
+        <ion-icon name="close" color="dark"></ion-icon>
+      </button>
+    </ion-item>
+    <ion-item *ngIf="bookmarks.length == 0" text-wrap>
+      <h1>
+        <ion-icon name="sad"></ion-icon>
+        No Bookmarks
+      </h1>
+      <p>Swipe down to bookmark a page, or press the bookmark button at the bottom to save it for later!</p>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer *ngIf="bookmarks.length > 0">
+  <ion-toolbar>
+    <ion-buttons end>
+      <button ion-button block icon-right color="danger" (click)="deleteBookmarks()">
+        Delete All <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -13,3 +13,5 @@ resources/ios
 /captures
 .idea/gradle.xml
 .tmp
+*.log
+www/build

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { ModalController, ViewController } from 'ionic-angular';
+
+import { HistoryPage } from '../../pages/history/history';
+import { BookmarksPage } from '../../pages/bookmarks/bookmarks';
 
 import { Wiki } from '../../providers/wiki';
 
@@ -9,36 +12,38 @@ import { Wiki } from '../../providers/wiki';
 })
 export class SettingsPage {
   chanceRandom: number;
-  historyCleared: boolean;
-  interestsCleared: boolean;
   language: string;
 
   constructor(
-    public navCtrl: NavController,
+    public view: ViewController,
+    public modal: ModalController,
     public wiki: Wiki
-  ) {}
+  ) {
+    let that = this;
+    this.view.onDidDismiss(() => {
+      that.dismiss();
+    })
+  }
 
   ionViewDidLoad() {
     this.chanceRandom = this.wiki.chanceRandom * 100;
     this.language = this.wiki.language;
-    this.historyCleared = false;
-    this.interestsCleared = false;
   }
 
-  clearHistory(){
-    this.historyCleared = true;
-    this.wiki.clearHistory();
+  history(){
+    this.modal.create(HistoryPage).present();
+    this.dismiss();
   }
 
-  clearInterests(){
-    this.interestsCleared = true;
-    this.wiki.clearInterests();
+  bookmarks(){
+    this.modal.create(BookmarksPage).present();
+    this.dismiss();
   }
 
   dismiss(){
     this.wiki.setLanguage(this.language);
     this.wiki.setChanceRandom(this.chanceRandom / 100);
     this.wiki.saveSettings();
-    this.navCtrl.pop();
+    this.view.dismiss();
   }
 }

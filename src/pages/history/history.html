@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Interests</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list *ngIf="history.length > 0">
+    <ion-item *ngFor="let h of history | orderByInterest:'rank'" text-wrap>
+      <ion-badge *ngIf="!!h && !!h['rank']" [color]="getColor(h['rank'])">{{h['rank']}}</ion-badge>
+      {{getTitle(h['interest'])}}
+      <button ion-button item-right clear (click)="history.splice(index, 1)">
+        <ion-icon name="close" color="dark"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="history.length == 0" >
+    <ion-item text-wrap>
+      <h1>
+        <ion-icon name="heart-outline"></ion-icon> No Interests
+      </h1>
+      <p>Why not start swiping through some articles?</p>
+    </ion-item>
+  </ion-list>
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-inifinite-scroll>
+</ion-content>
+
+<ion-footer *ngIf="history.length > 0">
+  <ion-toolbar>
+    <ion-buttons end>
+      <button ion-button block icon-right color="danger" (click)="deleteInterests()" [disabled]="interestsDeleted">
+        Delete All <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
