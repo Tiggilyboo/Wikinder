@@ -74,7 +74,7 @@ export class Wiki {
   private getRandom(category: string = null): Promise<any> {
     var that = this;
     var url = this.constructQuery();
-    if(!!category || category == null){
+    if(!category || category == null){
       url += "&list=random&rnnamespace=0&rnlimit=1&continue";
     } else {
       url += "&list=categorymembers&prop=info&cmprop=ids&cmtitle="
@@ -142,9 +142,9 @@ export class Wiki {
 
       return new Promise(function(resolve, reject){
         var requests = 0;
-
+        
         while(requests < n){
-          if(interests.length == 0 || Math.random() > that.chanceRandom){
+          if(interests.length == 0 || Math.random() < that.chanceRandom){
             that.getRandom().then((r) => {
               articles.push(r);
               if(articles.length == n){ resolve(articles) };

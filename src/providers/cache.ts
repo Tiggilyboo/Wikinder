@@ -37,6 +37,10 @@ export class Cache {
     }));
   }
 
+  delete(interest){
+    this.storage.remove(interest);
+  }
+
   get(key: string): Promise<any>{
     return this.storage.get(key);
   }
@@ -65,7 +69,7 @@ export class Cache {
           if(!!v && !!v['interest']
           && ++s > start && all.length < count)
             all.push(v);
-          if(all.length == l - 2) resolve(all);
+          if(s == l - 2) resolve(all);
         });
       });
     });
@@ -82,13 +86,21 @@ export class Cache {
         var all = [];
         that.storage.forEach((j: any, k: string, i: number) => {
           var v = typeof(j) === "string" ? JSON.parse(j) : j;
-          if(!!v && !!v['interest']) all.push(v);
+          if(!!v && !!v['interest'] && !!v['rank']) all.push(v);
           if(++c >= l - 2) return all;
         }).then((a) => {
           c = 0;
-          resolve(a.sort(function(x, y){
-            return ++c >= n ? -1 : y['rank'] - x['rank'];
-          }));
+          var s = a.sort(function(x, y){
+            return y.rank - x.rank;
+          });
+          s = s.splice(0, n);
+          for(c = 0; c < s.length; c++){
+            if(s[c].rank < 0){
+              s.splice(c, 1);
+              c--;
+            }
+          }
+          resolve(s);
         }).catch((e) => {
           reject(e);
         });

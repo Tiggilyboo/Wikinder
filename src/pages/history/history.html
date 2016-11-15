@@ -11,25 +11,26 @@
 
 <ion-content padding>
   <ion-list *ngIf="history.length > 0">
-    <ion-item *ngFor="let h of history | orderByInterest:'rank'" text-wrap>
-      <ion-badge *ngIf="!!h && !!h['rank']" [color]="getColor(h['rank'])">{{h['rank']}}</ion-badge>
+    <ion-item *ngFor="let h of history | orderByInterest:'rank'; let i = index" text-wrap>
+      <ion-badge [color]="getColor(h['rank'])">{{h['rank']}}</ion-badge>
       {{getTitle(h['interest'])}}
-      <button ion-button item-right clear (click)="history.splice(index, 1)">
+      <button ion-button item-right clear (click)="history.splice(i, 1)">
         <ion-icon name="close" color="dark"></ion-icon>
       </button>
     </ion-item>
   </ion-list>
-  <ion-list *ngIf="history.length == 0" >
+  <ion-list *ngIf="history.length == 0">
     <ion-item text-wrap>
       <h1>
-        <ion-icon name="heart-outline"></ion-icon> No Interests
+        <ion-icon name="heart-outline"></ion-icon>
+        No Interests
       </h1>
       <p>Why not start swiping through some articles?</p>
     </ion-item>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="loadMore($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-inifinite-scroll>
+  </ion-infinite-scroll>
 </ion-content>
 
 <ion-footer *ngIf="history.length > 0">

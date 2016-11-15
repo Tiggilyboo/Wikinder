@@ -25,18 +25,24 @@ export class HistoryPage {
   }
 
   ionViewDidLoad() {
+    this.history = [];
     this.load();
   }
 
   load(){
     var that = this;
     this.cache.all(this.last, this.size).then((d) => {
-      that.history = d;
+      for(let i = 0; i < d.length; i++){
+        if(!!d[i] && !!d[i]['rank']){
+          that.history.push(d[i]);
+        }
+      }
     });
   }
 
   delete(index: any): void {
-    this.history.splice(index, 1);
+    var c = this.history.splice(index, 1);
+    if(!!c['interest']) this.cache.delete(c['interest']);
   }
 
   deleteInterests(){
@@ -62,6 +68,8 @@ export class HistoryPage {
     setTimeout(() => {
       this.last += this.size;
       this.load();
+
+      e.complete();
     }, 500);
   }
 
